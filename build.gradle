@@ -1,0 +1,127 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'idea'
+apply plugin: 'groovy'
+apply plugin: 'tomcat'
+
+def tomcatVersion = '6.0.29'
+
+// This build script retrieves the tomcat plugin because it is not an "official" gradle plugin
+buildscript {
+    repositories {
+        add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+            name = 'GitHub'
+            addArtifactPattern 'http://cloud.github.com/downloads/[organisation]/[module]/[module]-[revision].[ext]'
+        }
+    }
+
+    dependencies {
+        classpath 'bmuschko:gradle-tomcat-plugin:0.9.2'
+    }
+}
+
+sourceCompatibility = 1.6
+group = 'com.excella.javacoe.demo'
+version = '1.0'
+
+configurations {
+    
+	jaxb
+	
+	cucumberRuntime {
+        extendsFrom testRuntime
+    }
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {	
+		jaxb group: 'com.sun.xml.bind', name: 'jaxb-xjc', version: '2.2.4-1'
+		
+		groovy 'org.codehaus.groovy:groovy:1.8.5'
+		
+		compile 'commons-lang:commons-lang:2.6',
+				'commons-beanutils:commons-beanutils:1.8.3',
+				'log4j:log4j:1.2.16',
+				'org.slf4j:slf4j-log4j12:1.6.1', 
+				'commons-logging:commons-logging:1.1.1',
+				'org.springframework:spring-context:3.1.0.RELEASE',
+				'org.springframework:spring-context:3.1.0.RELEASE',
+				'activesoap:jaxb-xercesImpl:1.5',
+				'xerces:xmlParserAPIs:2.6.2',
+				'xerces:xercesImpl:2.6.2',
+				'org.springframework.ws:spring-ws-core:2.0.2.RELEASE'
+
+		testCompile 'junit:junit:4.10',
+					'org.springframework:spring-test:3.1.0.RELEASE',
+					'info.cukes:cucumber-junit:1.0.7',
+					'info.cukes:cucumber-groovy:1.0.7',
+					'com.github.groovy-wslite:groovy-wslite:0.7.0'
+					
+		tomcat "org.apache.tomcat:catalina:$tomcatVersion",
+				"org.apache.tomcat:coyote:$tomcatVersion",
+				"org.apache.tomcat:jasper:$tomcatVersion",
+				"org.apache.tomcat:dbcp:$tomcatVersion"
+
+		cucumberRuntime files("${jar.archivePath}")
+                
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs "${buildDir}/generated-sources"
+        }
+    }
+}
+
+
+task jaxb () {
+    // output directory
+    def jaxbTargetDir = file( "${buildDir}/generated-sources" )
+
+    // perform actions
+    doLast {
+        jaxbTargetDir.mkdirs()
+
+        // Ant XJC Task
+        ant{
+				taskdef(name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask', classpath: configurations.jaxb.asPath)
+                
+				xjc(destdir: "${jaxbTargetDir}", 
+					package: 'com.excella.javacoe.demo.jaxb', 
+					binding: 'src/main/resources/jaxb/jaxb-bindings.xml',
+					extension: true) {
+					schema(dir:'src/main/resources/xsd', includes: 'schema.xsd')
+				}
+        }
+
+    }
+}
+
+compileJava.dependsOn jaxb
+
+task cucumber() {
+    dependsOn assemble
+    doLast {
+        javaexec {
+            main = "cucumber.cli.Main"
+            classpath = configurations.cucumberRuntime
+            args = ['-f', 'json:build/cucumber.json','-f', 'junit:build/cucumber.xml','-f','pretty','--glue', 'src/test/groovy', 'src/test/resources']
+
+        }
+    }
+}
+
+[tomcatRun, tomcatRunWar]*.contextPath = 'stock-webservice'
+
+war {
+    classpath = classpath - project.configurations.groovy
+    archiveName = "stock-webservice.${extension}"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.0-rc-3'
+}

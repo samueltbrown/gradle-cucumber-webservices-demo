@@ -1,0 +1,10 @@
+<jxb:bindings
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:pd="http://chubb.com/cpi/polsvc/xmlobj"
+    version="2.1">
+	<jxb:globalBindings>
+        <xjc:superClass name="com.excella.javacoe.demo.jaxb.BaseJaxbObject" />
+    </jxb:globalBindings>
+</jxb:bindings>

@@ -1,0 +1,34 @@
+# Log files
+*.log
+
+# Java Class Files
+*.class
+
+# Package Files #
+*.war
+*.ear
+
+# Eclipse Files #
+.classpath
+.factorypath
+.project
+WebDiagram.gph
+*/.settings
+*/WebContent
+*/bin
+/.metadata
+
+
+# Ant/Gradle Target Directories
+/target
+/.gradle
+*/build
+
+#IntelliJ Files/Directories
+*.iml
+/.idea
+/.apt_generated
+/out
+
+#tomcat files
+*/context.xml

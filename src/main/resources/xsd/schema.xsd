@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema targetNamespace="http://www.excella.com/stock" xmlns:Q1="http://www.excella.com/stock" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="requestedSymbol" type="xsd:string"/>
+  <xsd:element name="stockSymbol" type="xsd:string"/>
+  <xsd:element name="stockPrice" type="xsd:double"/>
+  <xsd:element name="stockPercentChange" type="xsd:double"/>
+  <xsd:element name="stockCurrentInfoRequest">
+    <xsd:complexType>
+      <xsd:all>
+        <xsd:element ref="Q1:requestedSymbol"/>
+      </xsd:all>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="stockCurrentInfoResponse">
+    <xsd:complexType>
+      <xsd:all>
+        <xsd:element ref="Q1:stockSymbol"/>
+        <xsd:element ref="Q1:stockPrice"/>
+        <xsd:element ref="Q1:stockPercentChange"/>
+      </xsd:all>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="stockCurrentInfo">
+    <xsd:complexType>
+      <xsd:all>
+        <xsd:element ref="Q1:stockCurrentInfoRequest"/>
+        <xsd:element ref="Q1:stockCurrentInfoResponse"/>
+      </xsd:all>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
