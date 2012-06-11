@@ -8,17 +8,6 @@
 *.war
 *.ear
 
-# Eclipse Files #
-.classpath
-.factorypath
-.project
-WebDiagram.gph
-*/.settings
-*/WebContent
-*/bin
-/.metadata
-
-
 # Ant/Gradle Target Directories
 /target
 /.gradle
