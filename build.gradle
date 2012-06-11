@@ -69,6 +69,7 @@ dependencies {
                 
 }
 
+//Includes JAXB generated classes as a source directory
 sourceSets {
     main {
         java {
@@ -77,7 +78,7 @@ sourceSets {
     }
 }
 
-
+//Generate JAXB bindings for the XSD used in the web service
 task jaxb () {
     // output directory
     def jaxbTargetDir = file( "${buildDir}/generated-sources" )
@@ -101,8 +102,10 @@ task jaxb () {
     }
 }
 
+//Prevents java compilation until after we have created our JAXB binding classes
 compileJava.dependsOn jaxb
 
+//Cucumber execution
 task cucumber() {
     dependsOn assemble
     doLast {
@@ -115,13 +118,31 @@ task cucumber() {
     }
 }
 
+//Set the tomcat options
 [tomcatRun, tomcatRunWar]*.contextPath = 'stock-webservice'
+[tomcatRun, tomcatRunWar, tomcatStop]*.stopPort = 8081
+[tomcatRun, tomcatRunWar, tomcatStop]*.stopKey = 'stopKey'
 
+task acceptanceTests() {
+    dependsOn assemble
+    doFirst {
+        tomcatRunWar.daemon = true
+        tomcatRunWar.execute()
+    }
+
+    doLast {
+        tasks.cucumber.execute()
+        tomcatStop.execute()
+    }
+}
+
+//Clever trick from Kent Beck to remove groovy from the WAR file. Also sets the archive name for the WAR
 war {
     classpath = classpath - project.configurations.groovy
     archiveName = "stock-webservice.${extension}"
 }
 
+//Creates the Gradle Wrapper so that gradle installation is not necessary to run this script
 task wrapper(type: Wrapper) {
     gradleVersion = '1.0-rc-3'
 }

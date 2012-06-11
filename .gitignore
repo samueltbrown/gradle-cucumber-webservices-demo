@@ -22,7 +22,7 @@ WebDiagram.gph
 # Ant/Gradle Target Directories
 /target
 /.gradle
-*/build
+/build
 
 #IntelliJ Files/Directories
 *.iml
