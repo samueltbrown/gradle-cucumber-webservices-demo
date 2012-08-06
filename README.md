@@ -16,7 +16,7 @@ acceptance testing of a web service.  The following tools/frameworks are used in
 3. From the project root run:
     ><b>gradlew clean build acceptanceTests</b>
 
-<b>Note:</b> The gradle wrapper uses Gradle v1.0rc3.  This application has not been tested with other versions. Results
+<b>Note:</b> The gradle wrapper uses Gradle v1.0.  This application has not been tested with other versions. Results
 may vary.
 
 # How it works
@@ -24,6 +24,12 @@ may vary.
 The included gradle script builds the application using the 'build' command.  Once built, the 'acceptanceTests' task
 execution will load the application on a local tomcat server on port 8080, run the cucumber tests, and then shut down
 the tomcat server.
+
+# Recent Updates
+
+<b>8/6/2012</b> - This plugin now uses my gradle cucumber plugin version 0.1!  You can find the source at:
+
+[https://github.com/samueltbrown/gradle-cucumber-plugin] (https://github.com/samueltbrown/gradle-cucumber-plugin)
 
 # Coming soon...
 

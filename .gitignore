@@ -18,6 +18,7 @@
 /.idea
 /.apt_generated
 /out
+atlassian-ide-plugin.xml
 
 #tomcat files
 */context.xml

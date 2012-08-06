@@ -20,17 +20,17 @@ buildscript {
     }
 }
 
+// This build script retrieves the cucumber plugin for gradle
+buildscript {
+    apply from: 'https://github.com/samueltbrown/gradle-cucumber-plugin/raw/master/repo/gradle-cucumber-plugin/gradle-cucumber-plugin/0.1/cucumberinit.gradle'
+}
+
 sourceCompatibility = 1.6
 group = 'com.excella.javacoe.demo'
 version = '1.0'
 
 configurations {
-    
 	jaxb
-	
-	cucumberRuntime {
-        extendsFrom testRuntime
-    }
 }
 
 repositories {
@@ -65,7 +65,8 @@ dependencies {
 				"org.apache.tomcat:jasper:$tomcatVersion",
 				"org.apache.tomcat:dbcp:$tomcatVersion"
 
-		cucumberRuntime files("${jar.archivePath}")
+		cucumberRuntime files("${jar.archivePath}"),
+                        'info.cukes:cucumber-groovy:1.0.11'
                 
 }
 
@@ -106,16 +107,9 @@ task jaxb () {
 compileJava.dependsOn jaxb
 
 //Cucumber execution
-task cucumber() {
-    dependsOn assemble
-    doLast {
-        javaexec {
-            main = "cucumber.cli.Main"
-            classpath = configurations.cucumberRuntime
-            args = ['-f', 'json:build/cucumber.json','-f', 'junit:build/cucumber.xml','-f','pretty','--glue', 'src/test/groovy', 'src/test/resources']
-
-        }
-    }
+cucumber() {
+    glueDirs = ['src/test/groovy', 'src/test/resources']
+    formats = ['json:build/cucumber.json','junit:build/cucumber.xml','pretty']
 }
 
 //Set the tomcat options
@@ -144,5 +138,5 @@ war {
 
 //Creates the Gradle Wrapper so that gradle installation is not necessary to run this script
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.0-rc-3'
+    gradleVersion = '1.0'
 }
